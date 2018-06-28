@@ -1,8 +1,10 @@
 FROM haskell:8.0
 
+MAINTAINER rdanielmurphy <rdanielmurphy@gmail.com>
+
 # install latex packages
 RUN apt-get update -y \
-  && apt-get install -y -o Acquire::Retries=10 --no-install-recommends \
+  && apt-get install -y --no-install-recommends \
     texlive-latex-base \
     texlive-xetex latex-xcolor \
     texlive-math-extra \
@@ -10,16 +12,25 @@ RUN apt-get update -y \
     texlive-fonts-extra \
     texlive-bibtex-extra \
     fontconfig \
-    lmodern
+    lmodern \
+    curl \
+    jq \
+    fonts-liberation
 
-# will ease up the update process
-# updating this env variable will trigger the automatic build of the Docker image
+# install ms corefonts
+# RUN echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | debconf-set-selections
+# RUN apt-get install -y ttf-mscorefonts-installer
+
+# env for installs
 ENV PANDOC_VERSION "2.2.1"
+ENV NODE_MAJOR_VERSION "6"
 
 # install pandoc
 RUN cabal update && cabal install pandoc-${PANDOC_VERSION}
 
-FROM node:carbon
+# install nodejs
+RUN curl -sL https://deb.nodesource.com/setup_${NODE_MAJOR_VERSION}.x | bash -
+RUN apt-get install -y nodejs
 
 # Create app directory
 WORKDIR /usr/src/app

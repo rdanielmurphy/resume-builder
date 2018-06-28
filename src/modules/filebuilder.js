@@ -1,4 +1,5 @@
 var constants = require('../constants');
+var pandoc = require('node-pandoc');
 
 function retrieveHTML() {
 	return "<h1>TEST</h1>";
@@ -23,6 +24,8 @@ module.exports.version = function() {
 module.exports.generateFiles = function(types) {
 	var html = "";
 
+	const args = '-f html -t docx -o word.docx';
+
 	try {
 		html = retrieveHTML();
 
@@ -36,6 +39,17 @@ module.exports.generateFiles = function(types) {
 			else 
 				console.log("Invalid document type: " + type);
 		});
+
+		// Set your callback function
+		let callback = function (err, result) {
+			if (err) console.error('Oh Nos: ',err);
+			 // Without the -o arg, the converted value will be returned.
+			 return console.log(result), result;
+		};
+
+		// Call pandoc
+		pandoc(html, args, callback);
+
 	} catch(e) {
 		console.log("Error building HTML " + e);
 	}

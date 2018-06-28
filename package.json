@@ -12,5 +12,8 @@
     "resume"
   ],
   "author": "Daniel Murphy",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "node-pandoc": "^0.3.0"
+  }
 }
