@@ -12,6 +12,7 @@ const getAllAttributes = function(node) {
 	return attributes;
 }
 
+// 
 function extractSubDataItems(html) {
 	let dataSubItems = [];
 	const $ = cheerio.load(html);
