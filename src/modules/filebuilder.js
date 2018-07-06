@@ -1,8 +1,9 @@
 var constants = require('../constants');
 var pandoc = require('node-pandoc');
+var generateHTML = require('./htmlgenerator');
 
 function retrieveHTML() {
-	return "<h1>TEST</h1>";
+	return generateHTML('./resume');
 }
 
 function createHtmlResume() {
@@ -24,11 +25,9 @@ module.exports.version = function() {
 module.exports.generateFiles = function(types) {
 	var html = "";
 
-	const args = '-f html -t docx -o word.docx';
+	const args = '-f html -t docx -o docs/word.docx';
 
-	try {
-		html = retrieveHTML();
-
+	retrieveHTML().then((html) => {
 		types.forEach(type => {
 			if (type === constants.PDF)
 				createPdfResume(html);
@@ -36,22 +35,23 @@ module.exports.generateFiles = function(types) {
 				createDocxResume(html);
 			else if (type === constants.HTML)
 				createHtmlResume(html);
-			else 
+			else
 				console.log("Invalid document type: " + type);
 		});
 
 		// Set your callback function
-		let callback = function (err, result) {
-			if (err) console.error('Oh Nos: ',err);
-			 // Without the -o arg, the converted value will be returned.
-			 return console.log(result), result;
+		let callback = function(err, result) {
+			if (err) console.error('Oh Nos: ', err);
+			// Without the -o arg, the converted value will be returned.
+			return console.log(result), result;
 		};
 
 		// Call pandoc
-		pandoc(html, args, callback);
+		// pandoc(html, args, callback);
+		//
+		console.log(html);
 
-	} catch(e) {
-		console.log("Error building HTML " + e);
-	}
+	}).catch((error) => {
+		console.log("Error building HTML " + error);
+	});
 }
-

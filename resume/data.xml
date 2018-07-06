@@ -1,0 +1,53 @@
+<resume-data>
+	<data id="name">
+		Homer Simpson
+	</data>
+	<data id="address1">
+		742 Evergreen Terrace
+	</data>
+	<data id="address2">
+		Springfield, United States
+	</data>
+	<data id="phone">
+		939-555-0113
+	</data>
+	<data id="email">
+		E-Mail: chunkylover53@aol.com
+	</data>
+	<data id="summary">
+Award-winning nuclear safety inspector with 20 years' experience, plus additional skills as police
+chief, bartender, astronaut, snowplow driver, sports team mascot, and uhhh, is that a box of
+donuts? MmmmmmDOOOnuts!
+	</data>
+	<data id="education1">
+		Springfield High School, Springfield, USA
+	</data>
+	<data id="education2">
+		HS Diploma College Prep
+	</data>
+	<data id="awards1">
+		1992: Montgomery Burns Award for Outstanding Service in the Field of Excellence
+	</data>
+	<data id="jobsdata">
+		<data-item company="Springfield Nuclear Power Plant" location="Springfield, USA" date="1989 to Present" title="Safety Inspector">
+			<data-subitem>Strengthened safety procedures that resulted in 75% fewer accidents on days I was absent.</data-subitem>
+			<data-subitem>Pioneered workplace stress-reduction methods that worked for at least one employee.</data-subitem>
+		</data-item>
+		<data-item company="City of Springfield" location="Springfield, USA" date="2002 to 2002" title="Chief of Police">
+			<data-subitem>Broke up weasel-selling ring.</data-subitem>
+			<data-subitem>Secured community support in almost-successful effort to expel organized crime from city.</data-subitem>
+		</data-item>
+		<data-item company="Moe's Tavern and Homer's Hunting Club" location="Springfield, USA" date="2001 to 2001" title="">
+			<data-subitem>Engaged patrons in witty, whimsical, avuncular dialog covering topics such as the arts, philosophy, politics, and spectator sports.<data-subitm>
+			<data-subitem>Launched remodeling project that led to 100% reduction in clientele (including myself).</data-subitem>
+		</data-item>
+		<data-item company="National Aeronautics and Space Administration (NASA)" location="Cape Canaveral, FL" date="1994 to 1994" title="Astronaut">
+			<data-subitem>Averted in-flight disaster by forcing giant ants out of cockpit during space shuttle mission.</data-subitem>
+		</data-item>
+		<data-item company="Mr Plow" location="Springfield, USA" date="1992 to 1993" title="Owner, Chief Marketing Officer, and Chief Driver for Snow-Plowing Business">
+			<data-subitem>Boosted business 15% by executing late-night TV marketing campaign targeting homeowners
+				who were too wasted to shovel their driveways<data-subitem>
+			<data-subitem>Deliberated at length before rescuing man trapped beneath mountain avalanche.</data-subitem>
+		</data-item>
+	</data>
+<resume-data>
