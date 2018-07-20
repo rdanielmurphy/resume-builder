@@ -6,16 +6,31 @@
 	<p>Email: ${email}</p>
 </div>
 
-<hr>
+<hr />
 
 <div class="section-header">SUMMARY OF QUALIFICATIONS</div>
-<hr>
+<hr />
+<p>${summary}</p>
 
 <div class="section-header">EMPLOYMENT HISTORY</div>
-<hr>
+<hr />
+<div data-items='jobsdata' item='x'>
+	<div>
+		<div>
+			<b>${x.company},</b>
+			<b>${x.location}</b>
+		</div>
+		<div>
+			${x.position}
+		</div>
+		<li data-items='x.subItems' item='n'>
+			<ul>${n}</ul>
+		</li>
+	</div>
+</div>
 
 <div class="section-header">EDUCATION</div>
-<hr>
+<hr />
 
 <div class="section-header">AWARDS</div>
-<hr>
+<hr />

@@ -2,17 +2,6 @@ const Promises = require("bluebird");
 const cheerio = require('cheerio');
 const _ = require('lodash');
 
-const getAllAttributes = function(node) {
-	let attributes = {};
-
-	_.forEach(node.attribs, (value, name) => {
-		attributes[name] = value
-	});
-
-	return attributes;
-}
-
-// 
 function extractSubDataItems(html) {
 	let dataSubItems = [];
 	const $ = cheerio.load(html);
@@ -35,7 +24,7 @@ function extractDataItems(html) {
 	$('*').find('data-item').each(function(i, elm) {
 		let dataItem = {
 			'attributes': getAllAttributes($(elm)[0]),
-			'subitems': extractSubDataItems($(elm).html())
+			'subItems': extractSubDataItems($(elm).html())
 		};
 		dataItems.push(dataItem);
 	});
@@ -57,7 +46,7 @@ function compileData(data) {
 		compiledData[$(elm).attr('id')] = extractDataItems($(elm).html());
 	});
 
-	console.log(compiledData);
+	//	console.log(compiledData);
 
 	return compiledData;
 }
@@ -79,35 +68,60 @@ function searchForStateVars(val) {
 function replaceVars(html, data) {
 	const $ = cheerio.load(html);
 
-	$('#resume-root').find('*').contents().filter(function() {
+	$('*').contents().filter(function() {
 		return this.nodeType == 3 || this.nodeType == 1;
 	}).each(function(i, elm) {
-		let text = $(elm).text();
-		let newString = text;
+		//debugger;
+		if ($(elm).attr('data-items')) {
+			console.log('got data item');
+			const template = $(elm).html();
+			const dataItemsId = $(elm).attr('data-items');
+			//console.log('template', template);
+			//console.log('dataitems', dataItemsId);
 
-		if (text && text.length > 0 && text.includes("${")) {
-			let results = searchForStateVars(text.trim());
-			for (let value of results) {
-				var key = value.substring(2, value.length - 1);
-				newString = newString.split(value).join(data[key]);
+			let newString = replaceStringVars(template, data[dataItemsId]);
+			//$(elm).text(newString);
+			console.log('data-item:', newString);
+		} else {
+			console.log('got reg item');
+			let text = $(elm).html();
+			console.log(text);
+			let newString = replaceStringVars(text, data);
+			if (newString) {
+				$(elm).html(newString);
 			}
 		}
-		$(elm).text(newString);
 	});
 
 	return $.html();
 }
 
 function replaceDataItems(html, data) {
-	return html;
+	const $ = cheerio.load(html);
+
+	$('div[data-items]').each(function(i, elm) {
+		const template = $(elm).html();
+		const dataItemsId = $(elm).attr('data-items');
+		console.log('template', template);
+		console.log('dataitems', dataItemsId);
+
+		let newString = replaceStringVars(template, data[dataItemsId]);
+		//$(elm).text(newString);
+		console.log('data-item:', newString);
+	});
+
+	return $.html();
 }
 
 function compileHtml(data, html) {
+	//console.log(html);
 	let compiledHTML = '<div id="resume-root">' + html + '</div>';
 	let compiledData = compileData(data);
 
+	//	compiledHTML = replaceDataItems(compiledHTML, compiledData);
 	compiledHTML = replaceVars(compiledHTML, compiledData);
-	compiledHTML = replaceDataItems(compiledHTML, compiledData);
+
+	debugger;
 
 	return compiledHTML;
 }
