@@ -37,17 +37,16 @@ donuts? MmmmmmDOOOnuts!
 			<data-subitem>Broke up weasel-selling ring.</data-subitem>
 			<data-subitem>Secured community support in almost-successful effort to expel organized crime from city.</data-subitem>
 		</data-item>
-		<data-item company="Moe's Tavern and Homer's Hunting Club" location="Springfield, USA" date="2001 to 2001" title="">
-			<data-subitem>Engaged patrons in witty, whimsical, avuncular dialog covering topics such as the arts, philosophy, politics, and spectator sports.<data-subitm>
+		<data-item company="Moe's Tavern and Homer's Hunting Club" location="Springfield, USA" date="2001 to 2001" title="Manager">
+			<data-subitem>Engaged patrons in witty, whimsical, avuncular dialog covering topics such as the arts, philosophy, politics, and spectator sports.</data-subitem>
 			<data-subitem>Launched remodeling project that led to 100% reduction in clientele (including myself).</data-subitem>
 		</data-item>
 		<data-item company="National Aeronautics and Space Administration (NASA)" location="Cape Canaveral, FL" date="1994 to 1994" title="Astronaut">
 			<data-subitem>Averted in-flight disaster by forcing giant ants out of cockpit during space shuttle mission.</data-subitem>
 		</data-item>
 		<data-item company="Mr Plow" location="Springfield, USA" date="1992 to 1993" title="Owner, Chief Marketing Officer, and Chief Driver for Snow-Plowing Business">
-			<data-subitem>Boosted business 15% by executing late-night TV marketing campaign targeting homeowners
-				who were too wasted to shovel their driveways<data-subitem>
+			<data-subitem>Boosted business 15% by executing late-night TV marketing campaign targeting homeowners who were too wasted to shovel their driveways</data-subitem>
 			<data-subitem>Deliberated at length before rescuing man trapped beneath mountain avalanche.</data-subitem>
 		</data-item>
 	</data>
-<resume-data>
+</resume-data>

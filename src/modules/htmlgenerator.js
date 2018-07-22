@@ -1,129 +1,142 @@
 const Promises = require("bluebird");
 const cheerio = require('cheerio');
 const _ = require('lodash');
+const xmlUtils = require('./xmlUtils');
+const util = require('util');
+const xml2js = require('xml2js');
+const Builder = new xml2js.Builder();
 
-function extractSubDataItems(html) {
-	let dataSubItems = [];
-	const $ = cheerio.load(html);
-
-	$('*').find('data-subitem').each(function(i, elm) {
-		let dataSubItem = {
-			'attributes': getAllAttributes($(elm)[0]),
-			'text': $(elm).text()
-		};
-		dataSubItems.push(dataSubItem);
+function compileDataSubItemNode(node, compiledData) {
+	_.forEach(node, function (value, key) {
+		compiledData.push(value);//xmlUtils.getAllAttributes(value);
+		//compiledData['content'] = xmlUtils.getInnerHTML(value);
 	});
-
-	return dataSubItems;
 }
 
-function extractDataItems(html) {
-	let dataItems = [];
-	const $ = cheerio.load(html);
-
-	$('*').find('data-item').each(function(i, elm) {
-		let dataItem = {
-			'attributes': getAllAttributes($(elm)[0]),
-			'subItems': extractSubDataItems($(elm).html())
-		};
-		dataItems.push(dataItem);
+function compileDataItemNode(node, compiledData) {
+	_.forEach(node, function (value, key) {
+		compiledData[key] = xmlUtils.getAllAttributes(value);
+		if (value['data-subitem']) {
+			compiledData[key]['subItems'] = [];
+			compileDataSubItemNode(value['data-subitem'], compiledData[key]['subItems']);
+		}
 	});
-
-	return dataItems;
 }
 
-function compileData(data) {
-	const $ = cheerio.load(data);
-	let compiledData = {};
-
-	// Get state vars
-	$('resume-data').find('data:not(:has(*))').each(function(i, elm) {
-		compiledData[$(elm).attr('id')] = $(elm).text().trim();
+function compileDataNode(node, compiledData) {
+	_.forEach(node, function (value, key) {
+		if (value['data-item']) {
+			compiledData[value['$'].id] = {};
+			compileDataItemNode(value['data-item'], compiledData[value['$'].id]);
+		} else {
+			compiledData[value['$'].id] = xmlUtils.trim(value['_']);
+		}
 	});
-
-	// Get data-items
-	$('resume-data').find('data:has(*)').each(function(i, elm) {
-		compiledData[$(elm).attr('id')] = extractDataItems($(elm).html());
-	});
-
-	//	console.log(compiledData);
 
 	return compiledData;
 }
 
-function searchForStateVars(val) {
-	var results = [];
-
-	var regEx = new RegExp('(\\$\\{[\\w\\(\\)]*\\})', 'g');
-	var response = regEx.exec(val);
-
-	while (response) {
-		results.push(response[0]);
-		response = regEx.exec(val);
-	}
-
-	return results;
+function compileData(data) {
+	return compileDataNode(data['resume-data']['data'], {});
 }
 
-function replaceVars(html, data) {
-	const $ = cheerio.load(html);
+function compileDataItemTemplate(node, data) {
+	let dataItemsKey = '';
+	let dataItemsIterator = '';
+	let dataItemsTemplate = '';
+	let dataItemsTemplateTag = '';
+	let dataItemsTemplateInnerHTML = '';
 
-	$('*').contents().filter(function() {
-		return this.nodeType == 3 || this.nodeType == 1;
-	}).each(function(i, elm) {
-		//debugger;
-		if ($(elm).attr('data-items')) {
-			console.log('got data item');
-			const template = $(elm).html();
-			const dataItemsId = $(elm).attr('data-items');
-			//console.log('template', template);
-			//console.log('dataitems', dataItemsId);
+	console.log("data item node", node);
 
-			let newString = replaceStringVars(template, data[dataItemsId]);
-			//$(elm).text(newString);
-			console.log('data-item:', newString);
-		} else {
-			console.log('got reg item');
-			let text = $(elm).html();
-			console.log(text);
-			let newString = replaceStringVars(text, data);
-			if (newString) {
-				$(elm).html(newString);
-			}
+	_.forEach(node, function (value, key) {
+		if (key === '$') {
+			dataItemsKey = value['data-items'];
+			dataItemsIterator = value['item'];
+		}
+		else {
+			dataItemsTemplateTag = key;
+			dataItemsTemplateInnerHTML = value;
+			dataItemsTemplate = {};
+			dataItemsTemplate[key] = dataItemsTemplateInnerHTML;
 		}
 	});
 
-	return $.html();
-}
+	// console.log("dataItemsKey", dataItemsKey);
+	// console.log("dataItemsIterator", dataItemsIterator);
+	// console.log("dataItemsTemplateTag", dataItemsTemplateTag);
+	// console.log("dataItemsTemplateInnerHTML", dataItemsTemplateInnerHTML);
+	// console.log("dataItemsTemplate", dataItemsTemplate);
 
-function replaceDataItems(html, data) {
-	const $ = cheerio.load(html);
-
-	$('div[data-items]').each(function(i, elm) {
-		const template = $(elm).html();
-		const dataItemsId = $(elm).attr('data-items');
-		console.log('template', template);
-		console.log('dataitems', dataItemsId);
-
-		let newString = replaceStringVars(template, data[dataItemsId]);
-		//$(elm).text(newString);
-		console.log('data-item:', newString);
+	// TODO: different paths for single line templates vs multiline templates?
+	let newNodes = [];
+	let dataSubset = xmlUtils.getDataFromPath(dataItemsKey, data);
+	_.forEach(dataSubset, function (value, key) {
+		let clonedNode = JSON.parse(JSON.stringify(dataItemsTemplate));
+		let newData = {};
+		newData[dataItemsIterator] = dataSubset[key];
+		//console.log("BEFORE", util.inspect(clonedNode, false, null));
+		let newNode = compileTemplate(clonedNode, newData);
+		//console.log("AFTER", util.inspect(newNode, false, null));
+		if (dataItemsTemplateTag === 'li' && newNodes[0]) {
+			newNodes[0][dataItemsTemplateTag].push(newNode[dataItemsTemplateTag][0]);
+		} else {
+			newNodes.push(newNode);
+		}
 	});
 
-	return $.html();
+	if (dataItemsTemplateTag === 'li') {
+		node[dataItemsTemplateTag] = newNodes[0][dataItemsTemplateTag];
+	} else {
+		node[dataItemsTemplateTag] = newNodes;
+	}
+}
+
+function compileTemplate(node, data) {
+	if (xmlUtils.hasDataItems(node)) {
+		compileDataItemTemplate(node, data);
+	}
+	else {
+		_.forEach(node, function (value, key) {
+			if (util.isArray(value) || util.isObject(value)) {
+				compileTemplate(value, data);
+			} else {
+				value = xmlUtils.replaceVars(value, data);
+				node[key] = value;
+			}
+		});
+	}
+
+	return node;
+}
+
+function replaceDataItems(json, data) {
+	return json;
 }
 
 function compileHtml(data, html) {
-	//console.log(html);
 	let compiledHTML = '<div id="resume-root">' + html + '</div>';
-	let compiledData = compileData(data);
 
-	//	compiledHTML = replaceDataItems(compiledHTML, compiledData);
-	compiledHTML = replaceVars(compiledHTML, compiledData);
+	return new Promise((resolve, reject) => {
+		xml2js.parseString(data, function (dataErr, dataResult) {
+			if (dataErr) {
+				reject("Error parsing data!" + dataErr);
+			}
 
-	debugger;
+			let compiledData = compileData(dataResult);
+			//console.log("data: ", compiledData);
+			xml2js.parseString(compiledHTML, function (templateErr, templateResult) {
+				if (templateErr) {
+					reject("Error parsing template!" + templateErr);
+				}
 
-	return compiledHTML;
+				let compiledJsonTemplate = compileTemplate(templateResult, compiledData);
+				compiledHTML = Builder.buildObject(compiledJsonTemplate);
+
+				resolve(compiledHTML);
+			});
+		});
+	});
 }
 
 function getResumeFiles(dir) {
@@ -134,26 +147,29 @@ function getResumeFiles(dir) {
 	promises.push(readFile(dir + '/template.html', "utf8"));
 
 	return new Promise((resolve, reject) => {
-		Promise.all(promises).then(function(data) {
-				resolve(data);
-			})
-			.catch(function(e) {
-				reject(e);
-			});
+		Promise.all(promises).then(function (data) {
+			resolve(data);
+		}).catch(function (e) {
+			reject(e);
+		});
 	});
 }
 
-module.exports = function(resumeDir) {
+module.exports = function (resumeDir) {
 	return new Promise((resolve, reject) => {
 		getResumeFiles(resumeDir).then((data) => {
 			try {
-				let html = compileHtml(data[0], data[1]);
-				resolve(html);
-			} catch (error) {
-				reject('Could not compile resume: ' + error.message);
+				compileHtml(data[0], data[1]).then((html) => {
+					console.log(html);
+					resolve(html);
+				}).catch((error1) => {
+					reject(error1);
+				});
+			} catch (error2) {
+				reject('Could not compile resume: ' + error2.message);
 			}
-		}).catch((error) => {
-			reject(error);
+		}).catch((error3) => {
+			reject(error3);
 		});
 	});
 }
