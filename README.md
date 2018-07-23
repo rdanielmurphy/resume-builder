@@ -2,8 +2,14 @@ Resume builder using NodeJS and Pandoc!  Export to HTML, PDF, or Docx.  Ideal fo
 
 Modify the data in the resume folder, build then run the docker container, and download the results thru the web browser!
 
-Build docker with:
+##Build docker with:
 docker build -t rdanielmurphy/resume-builder-app .
 
-Run docker with:
+##Run docker with:
 docker run -p 49160:8082 rdanielmurphy/resume-builder-app
+
+##SSH into docker container:
+docker exec -it <containerid> bash
+
+##Copy word.docx from docker container
+docker cp <containerid>:usr/src/app/word.docx

@@ -5,8 +5,8 @@
 	"main": "server.js",
 	"scripts": {
 		"test": "./node_modules/.bin/mocha --reporter spec",
-		"start": "node src/server.js",
-		"debug": "node inspect src/server.js"
+		"start": "node services/src/server.js",
+		"debug": "node inspect services/src/server.js"
 	},
 	"keywords": [
 		"nodejs",

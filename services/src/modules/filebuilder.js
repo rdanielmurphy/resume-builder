@@ -25,7 +25,7 @@ module.exports.version = function () {
 module.exports.generateFiles = function (types) {
 	var html = "";
 
-	const args = '-f html -t docx -o docs/word.docx';
+	const args = '-f html -t docx -o word.docx';
 
 	retrieveHTML().then((html) => {
 		types.forEach(type => {
@@ -47,7 +47,7 @@ module.exports.generateFiles = function (types) {
 		};
 
 		// Call pandoc
-		// pandoc(html, args, callback);
+		pandoc(html, args, callback);
 		//
 		//console.log(html);
 
