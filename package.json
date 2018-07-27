@@ -4,8 +4,10 @@
 	"description": "Fork this repo and use to build your resume from html/css into PDF and Word files.",
 	"main": "server.js",
 	"scripts": {
-		"test": "./node_modules/.bin/mocha --reporter spec",
-		"start": "node services/src/server.js",
+		"test": "./node_modules/.bin/mocha \"services/test/*.js\" --reporter spec",
+		"start": "npm run buildApp && npm run startService",
+		"buildApp": "npm --prefix ./web run build",
+		"startService": "node services/src/server.js",
 		"debug": "node inspect services/src/server.js"
 	},
 	"keywords": [
@@ -17,12 +19,15 @@
 	"dependencies": {
 		"bluebird": "^3.5.1",
 		"cheerio": "^1.0.0-rc.2",
+		"connect": "^3.6.6",
+		"express": "^4.16.3",
 		"lodash": "^4.17.10",
-		"node-pandoc": "^0.3.0"
+		"node-pandoc": "^0.3.0",
+		"serve-static": "^1.13.2",
+		"xml2js": "^0.4.19"
 	},
 	"devDependencies": {
 		"chai": "^4.1.2",
-		"mocha": "^5.2.0",
-		"xml2js": "^0.4.19"
+		"mocha": "^5.2.0"
 	}
 }

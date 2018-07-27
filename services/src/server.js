@@ -1,13 +1,23 @@
-var http = require('http');
-var filebuilder = require('./modules/filebuilder');
-var constants = require('./constants');
+const http = require('http');
+const filebuilder = require('./modules/filebuilder');
+const constants = require('./constants');
+const express = require('express');
+const app = express();
 
-console.log("listening on port 8082...");
+//filebuilder.generateFiles([constants.PDF, constants.HTML, constants.DOCX]);
 
-//create a server object:
-http.createServer(function(req, res) {
-	console.log('Create server');
-	//filebuilder.generateFiles([constants.PDF, constants.HTML, constants.DOCX]);
-	res.write('Hello World! im very kewl.  version = ' + filebuilder.version()); //write a response to the client
-	res.end(); //end the response
-}).listen(8082); //the server object listens on port 8080
+// Setup APIs
+const normalizedPath = require("path").join(__dirname, "routes");
+require("fs").readdirSync(normalizedPath).forEach(function(file) {
+	if (file.endsWith("js")) {
+		require("./routes/" + file)(app);
+	}
+});
+
+// Serve static content
+const dirname = __dirname + ".\\..\\..\\web\\build"
+const connect = require('connect');
+const serveStatic = require('serve-static');
+app.use(serveStatic(dirname, {'index': ['index.html']})).listen(8082, function() {
+	console.log('Server running on 8082...');
+});

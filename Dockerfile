@@ -32,9 +32,6 @@ RUN apt-get update -y \
 	    RUN curl -sL https://deb.nodesource.com/setup_${NODE_MAJOR_VERSION}.x | bash -
 	    RUN apt-get install -y nodejs
 
-# install webpack
-	    RUN npm install webpack -g
-
 # Create app directory
 	    WORKDIR /usr/src/app
 	    RUN mkdir /usr/src/app/resumes
@@ -43,8 +40,12 @@ RUN apt-get update -y \
 # A wildcard is used to ensure both package.json AND package-lock.json are copied
 # where available (npm@5+)
 	    COPY package*.json ./
-
 	    RUN npm install
+	    RUN cd web
+	    COPY package*.json ./
+	    RUN npm install
+	    RUN cd ..
+
 # If you are building your code for production
 # RUN npm install --only=production
 
