@@ -1,5 +1,5 @@
 const expect = require("chai").expect;
-const xmlutils = require("../src/modules/xmlUtils");
+const xmlutils = require("../src/shared/xmlUtils");
 const xml2js = require('xml2js');
 const util = require('util');
 

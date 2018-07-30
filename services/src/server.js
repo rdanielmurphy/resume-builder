@@ -6,18 +6,18 @@ const app = express();
 
 //filebuilder.generateFiles([constants.PDF, constants.HTML, constants.DOCX]);
 
+// Serve static content
+const dirname = __dirname + ".\\..\\..\\web\\build"
+const serveStatic = require('serve-static');
+app.use(serveStatic(dirname, { 'index': ['index.html'] }));
+
 // Setup APIs
 const normalizedPath = require("path").join(__dirname, "routes");
-require("fs").readdirSync(normalizedPath).forEach(function(file) {
+require("fs").readdirSync(normalizedPath).forEach(function (file) {
 	if (file.endsWith("js")) {
-		require("./routes/" + file)(app);
+		require("./routes/" + file)(app, "api");
 	}
 });
 
-// Serve static content
-const dirname = __dirname + ".\\..\\..\\web\\build"
-const connect = require('connect');
-const serveStatic = require('serve-static');
-app.use(serveStatic(dirname, {'index': ['index.html']})).listen(8082, function() {
-	console.log('Server running on 8082...');
-});
+// Run server
+app.listen(8082, () => console.log('Example app listening on port 8082!'))

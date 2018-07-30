@@ -1,7 +1,6 @@
-const Promises = require("bluebird");
-const cheerio = require('cheerio');
 const _ = require('lodash');
-const xmlUtils = require('./xmlUtils');
+const xmlUtils = require('../shared/xmlUtils');
+const fileUtils = require('../shared/fileUtils');
 const util = require('util');
 const xml2js = require('xml2js');
 const Builder = new xml2js.Builder();
@@ -139,25 +138,9 @@ function compileHtml(data, html) {
 	});
 }
 
-function getResumeFiles(dir) {
-	var readFile = Promises.promisify(require("fs").readFile);
-
-	var promises = [];
-	promises.push(readFile(dir + '/data.xml', "utf8"));
-	promises.push(readFile(dir + '/template.html', "utf8"));
-
-	return new Promise((resolve, reject) => {
-		Promise.all(promises).then(function (data) {
-			resolve(data);
-		}).catch(function (e) {
-			reject(e);
-		});
-	});
-}
-
 module.exports = function (resumeDir) {
 	return new Promise((resolve, reject) => {
-		getResumeFiles(resumeDir).then((data) => {
+		fileUtils.getResumeFiles(resumeDir).then((data) => {
 			try {
 				compileHtml(data[0], data[1]).then((html) => {
 					console.log(html);

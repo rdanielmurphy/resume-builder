@@ -1,8 +1,7 @@
 const endpoint = "version";
-//var pjson = require('./package.json');
 
-module.exports = function(app) {
-	app.get('/' + endpoint, (req, res) => {
-		res.send({"version" : process.env.npm_package_version});
+module.exports = function (app, prefix) {
+	app.get('/' + prefix + '/' + endpoint, (req, res) => {
+		res.send({ "version": process.env.npm_package_version });
 	});
 }
