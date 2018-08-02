@@ -23,35 +23,35 @@ module.exports.version = function () {
 }
 
 module.exports.generateFiles = function (types) {
-	var html = "";
-
 	const args = '-f html -t docx -o word.docx';
+	return new Promise(function (resolve, reject) {
+		retrieveHTML().then((html) => {
+			types.forEach(type => {
+				if (type === constants.PDF)
+					createPdfResume(html);
+				else if (type === constants.DOCX)
+					createDocxResume(html);
+				else if (type === constants.HTML)
+					createHtmlResume(html);
+				else
+					console.log("Invalid document type: " + type);
+			});
 
-	retrieveHTML().then((html) => {
-		types.forEach(type => {
-			if (type === constants.PDF)
-				createPdfResume(html);
-			else if (type === constants.DOCX)
-				createDocxResume(html);
-			else if (type === constants.HTML)
-				createHtmlResume(html);
-			else
-				console.log("Invalid document type: " + type);
+			// Set your callback function
+			let callback = function (err, result) {
+				if (err) {
+					console.error('Oh Nos: ', err);
+					reject(err);
+				}
+				// Without the -o arg, the converted value will be returned.
+				return resolve(result);
+			};
+
+			// Call pandoc
+			pandoc(html, args, callback);
+		}).catch((error) => {
+			console.log("Error building HTML " + error);
+			reject(error);
 		});
-
-		// Set your callback function
-		let callback = function (err, result) {
-			if (err) console.error('Oh Nos: ', err);
-			// Without the -o arg, the converted value will be returned.
-			return console.log(result), result;
-		};
-
-		// Call pandoc
-		pandoc(html, args, callback);
-		//
-		//console.log(html);
-
-	}).catch((error) => {
-		console.log("Error building HTML " + error);
 	});
 }

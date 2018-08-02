@@ -1,15 +1,8 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
-import { render } from 'react-dom';
-import brace from 'brace';
 import { split as SplitEditor } from 'react-ace';
 import 'brace/mode/java';
 import 'brace/theme/github';
-
-function onChange(newValue) {
-	console.log('change', newValue);
-}
 
 class App extends Component {
 	constructor(props) {
@@ -58,12 +51,39 @@ class App extends Component {
 			)
 	}
 
+	generateClick(e) {
+		alert("Hello World!");
+		const body = {
+			"template": this.state.value[0],
+			"data": this.state.value[1]
+		};
+		fetch('/api/resume/generate', {
+			method: 'post',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify(body)
+		}).then(function (response) {
+			return response.json();
+		}).then(function (data) {
+			console.log(data);
+		});
+	}
+
+	onChange = (newValue) => {
+		console.log("change:", newValue);
+		this.setState({
+			value: newValue
+		});
+	}
+
 	render() {
 		return (
 			<div>
 				<div className="columns">
 					<div className="column">
 						<h1>Resume Editor v{this.state.version}</h1>
+						<button onClick={(e) => this.generateClick(e)}>
+							Generate Resume
+           				</button>
 					</div>
 				</div>
 				<div class="columns">
@@ -83,7 +103,8 @@ class App extends Component {
 							value={this.state.value}
 							name="asd"
 							width="100%"
-							height="1300px"
+							height="1100px"
+							onChange={(newValue) => this.onChange(newValue)}
 							editorProps={{ $blockScrolling: true }}
 						/>
 					</div>

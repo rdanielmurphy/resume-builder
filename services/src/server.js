@@ -1,10 +1,8 @@
-const http = require('http');
-const filebuilder = require('./modules/filebuilder');
-const constants = require('./constants');
 const express = require('express');
 const app = express();
 
-//filebuilder.generateFiles([constants.PDF, constants.HTML, constants.DOCX]);
+app.use(express.json());       // to support JSON-encoded bodies
+//app.use(express.urlencoded({ limit: '50mb', extended: true })); // to support URL-encoded bodies
 
 // Serve static content
 const dirname = __dirname + ".\\..\\..\\web\\build"
