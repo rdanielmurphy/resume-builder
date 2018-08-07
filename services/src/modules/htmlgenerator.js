@@ -113,7 +113,7 @@ function replaceDataItems(json, data) {
 	return json;
 }
 
-function compileHtml(data, html) {
+function compileHtml(html, data) {
 	let compiledHTML = '<div id="resume-root">' + html + '</div>';
 
 	return new Promise((resolve, reject) => {
@@ -138,21 +138,21 @@ function compileHtml(data, html) {
 	});
 }
 
-module.exports = function (resumeDir) {
+module.exports = function (template, data) {
 	return new Promise((resolve, reject) => {
-		fileUtils.getResumeFiles(resumeDir).then((data) => {
-			try {
-				compileHtml(data[0], data[1]).then((html) => {
-					console.log(html);
-					resolve(html);
-				}).catch((error1) => {
-					reject(error1);
-				});
-			} catch (error2) {
-				reject('Could not compile resume: ' + error2.message);
-			}
-		}).catch((error3) => {
-			reject(error3);
-		});
+		//		fileUtils.getResumeFiles(resumeDir).then((data) => {
+		try {
+			compileHtml(template, data).then((html) => {
+				console.log(html);
+				resolve(html);
+			}).catch((error1) => {
+				reject(error1);
+			});
+		} catch (error2) {
+			reject('Could not compile resume: ' + error2.message);
+		}
+	}).catch((error3) => {
+		reject(error3);
 	});
+	//	});
 }

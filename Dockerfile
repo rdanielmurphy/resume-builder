@@ -41,16 +41,16 @@ RUN apt-get update -y \
 # where available (npm@5+)
 	    COPY package*.json ./
 	    RUN npm install
-	    RUN cd web
-	    COPY package*.json ./
-	    RUN npm install
-	    RUN cd ..
 
 # If you are building your code for production
 # RUN npm install --only=production
 
 # Bundle app source
 	    COPY . .
+
+	    RUN cd web
+	    RUN npm install
+	    RUN cd ..
 
 	    EXPOSE 8082
 	    CMD [ "npm", "start" ]

@@ -2,49 +2,23 @@ var constants = require('../constants');
 var pandoc = require('node-pandoc');
 var generateHTML = require('./htmlgenerator');
 
-function retrieveHTML() {
-	return generateHTML('./resume');
+function retrieveHTML(template, data) {
+	return generateHTML(template, data);
 }
 
-function createHtmlResume() {
-	//console.log("built html resume");
-}
-
-function createPdfResume() {
-	//console.log("built pdf resume");
-}
-
-function createDocxResume() {
-	//console.log("built docx resume");
-}
-
-module.exports.version = function () {
-	return "1.3.2";
-}
-
-module.exports.generateFiles = function (types) {
-	const args = '-f html -t docx -o word.docx';
+module.exports.generateFile = function (template, data, type) {
 	return new Promise(function (resolve, reject) {
-		retrieveHTML().then((html) => {
-			types.forEach(type => {
-				if (type === constants.PDF)
-					createPdfResume(html);
-				else if (type === constants.DOCX)
-					createDocxResume(html);
-				else if (type === constants.HTML)
-					createHtmlResume(html);
-				else
-					console.log("Invalid document type: " + type);
-			});
-
+		const args = '-f html -t ' + type + ' -o resume.' + type;
+		retrieveHTML(template, data).then((html) => {
 			// Set your callback function
 			let callback = function (err, result) {
 				if (err) {
 					console.error('Oh Nos: ', err);
 					reject(err);
 				}
+				console.log(result);
 				// Without the -o arg, the converted value will be returned.
-				return resolve(result);
+				return resolve('resume.' + type);
 			};
 
 			// Call pandoc

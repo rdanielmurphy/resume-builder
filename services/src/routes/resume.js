@@ -1,9 +1,9 @@
 const endpoint = "resume";
 const fileUtils = require('../shared/fileUtils');
+const path = require('path');
 const filebuilder = require('./../modules/filebuilder');
 const constants = require('./../constants');
-const resumeDir = __dirname + ".\\..\\..\\resume";
-const path = require('path');
+const resumeDir = path.resolve(__dirname + '/../../resume');
 const mime = require('mime');
 const fs = require('fs');
 
@@ -21,12 +21,14 @@ module.exports = function (app, prefix) {
 	app.post('/' + prefix + '/' + endpoint + '/generate', (req, res) => {
 		const template = req.body.template;
 		const data = req.body.data;
+		const type = req.body.type;
 
 		console.log("template", template);
 		console.log("data", data);
+		console.log("type", type);
 
-		filebuilder.generateFiles([constants.PDF, constants.HTML, constants.DOCX]).then(function (result) {
-			var file = __dirname + '/upload-folder/dramaticpenguin.MOV';
+		filebuilder.generateFile(template, data, type).then(function (result) {
+			var file = result;
 
 			var filename = path.basename(file);
 			var mimetype = mime.lookup(file);
@@ -34,10 +36,7 @@ module.exports = function (app, prefix) {
 			res.setHeader('Content-disposition', 'attachment; filename=' + filename);
 			res.setHeader('Content-type', mimetype);
 
-			var filestream = fs.createReadStream(file);
-			filestream.pipe(res);
-		}, function (err) {
-			throw new Error("Could not generate resume: " + err); // Express will catch this on its own.
+			res.download(file, filename);
 		});
 	});
 }
