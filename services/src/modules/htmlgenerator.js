@@ -5,6 +5,11 @@ const util = require('util');
 const xml2js = require('xml2js');
 const Builder = new xml2js.Builder();
 
+const xml2jsParser = new xml2js.Parser({
+	'explicitChildren' : true,
+	'preserveChildrenOrder' : true
+});
+
 function compileDataSubItemNode(node, compiledData) {
 	_.forEach(node, function (value, key) {
 		compiledData.push(value);//xmlUtils.getAllAttributes(value);
@@ -117,7 +122,7 @@ function compileHtml(html, data) {
 	let compiledHTML = '<div id="resume-root">' + html + '</div>';
 
 	return new Promise((resolve, reject) => {
-		xml2js.parseString(data, function (dataErr, dataResult) {
+		xml2jsParser.parseString(data, function (dataErr, dataResult) {
 			if (dataErr) {
 				reject("Error parsing data!" + dataErr);
 			}

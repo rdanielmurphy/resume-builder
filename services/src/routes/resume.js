@@ -2,6 +2,7 @@ const endpoint = "resume";
 const fileUtils = require('../shared/fileUtils');
 const path = require('path');
 const filebuilder = require('./../modules/filebuilder');
+const htmlbuilder = require('./../modules/htmlgenerator');
 const constants = require('./../constants');
 const resumeDir = path.resolve(__dirname + '/../../resume');
 const mime = require('mime');
@@ -37,6 +38,14 @@ module.exports = function (app, prefix) {
 			res.setHeader('Content-type', mimetype);
 
 			res.download(file, filename);
+		});
+	});
+	app.post('/' + prefix + '/' + endpoint + '/generatehtml', (req, res) => {
+		const template = req.body.template;
+		const data = req.body.data;
+
+		htmlbuilder(template, data).then(function (result) {
+			res.send(result);
 		});
 	});
 }

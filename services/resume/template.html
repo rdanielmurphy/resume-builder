@@ -1,34 +1,45 @@
 <div>
-	<h1>${name}</h1>
-	<p>${address1}</p>
-	<p>${address2}</p>
-	<p>Phone: ${phone}</p>
-	<p>Email: ${email}</p>
+    <div>
+    	<h1>${name}</h1>
+    	<p>${address1}</p>
+    	<p>${address2}</p>
+    	<p>Phone: ${phone}</p>
+    	<p>Email: ${email}</p>
+    	<hr />
+    </div>
+    
+    <div>
+        <div class="section-header">SUMMARY OF QUALIFICATIONS</div>
+        <hr />
+        <p>${summary}</p>
+    </div>
+    
+    <div>
+        <div>
+            <div class="section-header">EMPLOYMENT HISTORY</div>
+            <hr />
+        </div>
+        <div data-items='jobsdata' item='x'>
+        	<div>
+        		<div>
+        			<b>${x.company},</b>
+        			<b>${x.location}</b>
+        		</div>
+        		<div>${x.title}</div>
+        		<ul data-items='x.subItems' item='n'>
+        			<li>${n}</li>
+        		</ul>
+        	</div>
+        </div>
+    </div>
+    
+    <div>
+        <div class="section-header">EDUCATION</div>
+        <hr />
+    </div>
+    
+    <div>
+        <div class="section-header">AWARDS</div>
+        <hr />
+    </div>
 </div>
-
-<hr />
-
-<div class="section-header">SUMMARY OF QUALIFICATIONS</div>
-<hr />
-<p>${summary}</p>
-
-<div class="section-header">EMPLOYMENT HISTORY</div>
-<hr />
-<div data-items='jobsdata' item='x'>
-	<div>
-		<div>
-			<b>${x.company},</b>
-			<b>${x.location}</b>
-		</div>
-		<div>${x.title}</div>
-		<ul data-items='x.subItems' item='n'>
-			<li>${n}</li>
-		</ul>
-	</div>
-</div>
-
-<div class="section-header">EDUCATION</div>
-<hr />
-
-<div class="section-header">AWARDS</div>
-<hr />

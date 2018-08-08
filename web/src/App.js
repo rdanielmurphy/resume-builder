@@ -67,7 +67,7 @@ class App extends Component {
 			return response.blob();
 		}).then(blob => {
 			saveAs(blob, "resume." + type);
-		})
+		});
 	}
 
 	onChange = (newValue) => {
